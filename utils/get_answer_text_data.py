@@ -25,9 +25,9 @@ async def get_answer_text_data() -> str | None:
         async with aiofiles.open(file='input_data.txt',
                                  mode='w',
                                  encoding='utf-8-sig') as file:
-            await file.writelines(line + '\n' for line in file_content.split('\n')[1:] if line)
+            await file.writelines(line + '\n' for line in file_content.split('\n')[config.DATA_COUNT:] if line)
 
-        return_content: str = split_content[0]
+        return_content: str = split_content[:config.DATA_COUNT]
 
     if config.APPEND_TEXT:
         return_content += config.APPEND_TEXT
