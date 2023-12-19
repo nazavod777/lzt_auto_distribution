@@ -196,12 +196,12 @@ class StartDistribution:
                     if not posts_data_to_answer:
                         continue
 
-                    # for current_data in posts_data_to_answer:
-                    #     send_comment_result: bool = await self.send_comment(client=client,
-                    #                                                         current_data=current_data)
-                    #
-                    #     if send_comment_result:
-                    #         logger.success(f'Успешно отправлен комментарий к {current_data["post_id"]}')
+                    for current_data in posts_data_to_answer:
+                        send_comment_result: bool = await self.send_comment(client=client,
+                                                                            current_data=current_data)
+
+                        if send_comment_result:
+                            logger.success(f'Успешно отправлен комментарий к {current_data["post_id"]}')
 
             except Exception:
                 logger.error(f'Неизвестная ошибка: {format_exc()}')
