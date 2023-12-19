@@ -4,6 +4,8 @@ from traceback import format_exc
 
 import aiohttp
 import aiohttp.client_exceptions
+from aiohttp_proxy import ProxyConnector
+from better_proxy import Proxy
 from loguru import logger
 
 import config
@@ -168,9 +170,11 @@ class StartDistribution:
 
         while True:
             try:
-                async with aiohttp.ClientSession(headers={
-                    'Authorization': f'Bearer {config.LZT_API_KEY}'
-                }) as client:
+                async with aiohttp.ClientSession(connector=ProxyConnector.from_url(url=Proxy.from_str(
+                        proxy=config.PROXY_URL).as_url) if config.PROXY_URL else None,
+                                                 headers={
+                                                     'Authorization': f'Bearer {config.LZT_API_KEY}'
+                                                 }) as client:
                     last_page: int = await self.get_last_page(client=client)
                     posts_list: list = await self.get_posts_by_page(client=client,
                                                                     page=last_page)
@@ -192,12 +196,12 @@ class StartDistribution:
                     if not posts_data_to_answer:
                         continue
 
-                    for current_data in posts_data_to_answer:
-                        send_comment_result: bool = await self.send_comment(client=client,
-                                                                            current_data=current_data)
-
-                        if send_comment_result:
-                            logger.success(f'Успешно отправлен комментарий к {current_data["post_id"]}')
+                    # for current_data in posts_data_to_answer:
+                    #     send_comment_result: bool = await self.send_comment(client=client,
+                    #                                                         current_data=current_data)
+                    #
+                    #     if send_comment_result:
+                    #         logger.success(f'Успешно отправлен комментарий к {current_data["post_id"]}')
 
             except Exception:
                 logger.error(f'Неизвестная ошибка: {format_exc()}')
