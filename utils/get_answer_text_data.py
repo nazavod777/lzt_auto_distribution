@@ -22,12 +22,14 @@ async def get_answer_text_data() -> str | None:
             logger.error('Закончились входные данные в файле input_data.txt, дополните файл')
             return
 
-        async with aiofiles.open(file='input_data.txt',
-                                 mode='w',
-                                 encoding='utf-8-sig') as file:
-            await file.writelines(line + '\n' for line in file_content.split('\n')[config.DATA_COUNT:] if line)
+        async with (aiofiles.open(file='input_data.txt',
+                                  mode='w',
+                                  encoding='utf-8-sig') as file):
+            data_count: int = int(config.DATA_COUNT) if str(config.DATA_COUNT).isdigit() \
+                                                        and int(config.DATA_COUNT) > 0 else 1
+            await file.writelines(line + '\n' for line in file_content.split('\n')[data_count:] if line)
 
-        return_content: str = split_content[:config.DATA_COUNT]
+        return_content: str = split_content[:data_count]
 
     if config.APPEND_TEXT:
         return_content += config.APPEND_TEXT
