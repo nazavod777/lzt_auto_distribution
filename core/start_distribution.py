@@ -70,6 +70,16 @@ class StartDistribution:
         valid_data_to_answer: list[dict] = []
 
         for current_post in posts_list:
+            if config.MESSAGE_EQUAL:
+                if config.MESSAGE_EQUAL != current_post['post_body']:
+                    await db_actions.add_post_id(post_id=current_post['post_id'])
+                    continue
+
+            if config.MESSAGE_CONTAINS:
+                if config.MESSAGE_CONTAINS not in current_post['post_body']:
+                    await db_actions.add_post_id(post_id=current_post['post_id'])
+                    continue
+
             if current_post['poster_user_id'] == self.self_user_id or await db_actions.check_post_id_exists(
                     post_id=current_post['post_id']
             ):
